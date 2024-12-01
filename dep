@@ -1,7 +1,0 @@
-sudo pacman -S xorg-server libx11 libxft libxinerama gcc make \
-                 python libxkbcommon fontconfig libxcb wayland \
-                 neovim python-pynvim  lua libtermkey libvterm unibilium tree-sitter cmake ninja pkgconf \
-                 picom libconfig libev libgl libepoxy pcre2 pixman xcb-util-image xcb-util-renderutil \
-                 dbus xorg-xprop xorg-xwininfo rtkit meson git xorgproto libxext
-
-yay -S msgpack

@@ -1,53 +1,35 @@
 #!/bin/bash
 
-# Variables
-DWM_REPO="https://git.suckless.org/dwm"
-DWM_DIR="$HOME/dwm"
-PATCH_FOLDER="$HOME/dot_Files/.config/dwm/patches"
-CONFIG_H="$HOME/dot_Files/.config/dwm/config.def.h"
-
-# Function to check if yay is installed
-check_yay() {
-    if ! command -v yay &> /dev/null; then
-        echo "yay is not installed. Installing yay..."
-        sudo pacman -S --noconfirm base-devel git
-        git clone https://aur.archlinux.org/yay.git /tmp/yay
-        cd /tmp/yay || exit
-        makepkg -si --noconfirm
-        cd - || exit
-        rm -rf /tmp/yay
-        echo "yay has been installed successfully."
-    else
-        echo "yay is already installed."
-    fi
-}
-
-# Function to install dependencies
+# Major Components
 install_dependencies() {
-    echo "Installing system dependencies..."
+    # Install dependencies using pacman
     sudo pacman -S --noconfirm xorg-server libx11 libxft libxinerama gcc make \
-                     python libxkbcommon fontconfig libxcb neovim python-pynvim \
-                     lua libtermkey libvterm unibilium tree-sitter cmake ninja pkgconf \
-                     picom libconfig libev libgl libepoxy pcre2 pixman xcb-util-image \
-                     xcb-util-renderutil dbus xorg-xprop xorg-xwininfo rtkit meson git \
-                     xorgproto libxext
-}
+                 python libxkbcommon fontconfig libxcb neovim python-pynvim \
+                 lua libtermkey libvterm unibilium tree-sitter cmake ninja pkgconf \
+                 picom libconfig libev libgl libepoxy pcre2 pixman xcb-util-image \
+                 xcb-util-renderutil dbus xorg-xprop xorg-xwininfo rtkit meson git \
+                 xorgproto libxext
 
-# Function to install AUR dependencies
-install_aur_dependencies() {
-    echo "Installing AUR dependencies..."
+    # Install dependencies using yay
     yay -S --noconfirm msgpack
 }
 
-# Function to install fonts (Fira, Hack, Source JetBrains)
 install_fonts() {
-    echo "Installing fonts..."
+    # Install Nerd Fonts (Fira, Hack, JetBrains Mono)
     yay -S --noconfirm ttf-fira-code ttf-hack ttf-jetbrains-mono
+
+    # Install icons and symbols
+    yay -S --noconfirm nerd-fonts-symbols nerd-fonts-glyphs
 }
 
-# Function to clone dwm repo and apply patch
-install_dwm() {
-    # Clone dwm repository if not already cloned
+clone_and_patch_dwm() {
+    # Variables
+    DWM_REPO="https://git.suckless.org/dwm"
+    DWM_DIR="$HOME/dwm"
+    PATCH_FOLDER="$HOME/dot_files/.config/dwm/patches"
+    CONFIG_H="$HOME/dot_files/.config/dwm/config.def.h"
+
+    # Clone dwm repository
     if [ -d "$DWM_DIR" ]; then
         echo "dwm directory already exists. Skipping clone."
     else
@@ -75,7 +57,7 @@ install_dwm() {
         exit 1
     fi
 
-    # Remove the existing config.def.h file and copy your custom config
+    # Remove the existing config.def.h file and copy custom config.def.h
     if [ -f "$DWM_DIR/config.def.h" ]; then
         rm "$DWM_DIR/config.def.h"
         echo "Removed existing config.def.h."
@@ -95,22 +77,115 @@ install_dwm() {
     echo "dwm has been built and installed successfully."
 }
 
-# Main function that runs all steps
+install_zsh() {
+    # Check if Zsh is installed
+    if ! command -v zsh &>/dev/null; then
+        echo "Zsh not found, installing..."
+        sudo pacman -S --noconfirm zsh
+    else
+        echo "Zsh is already installed."
+    fi
+
+    # Install Oh My Zsh if not already installed
+    if [ ! -d "$HOME/.oh-my-zsh" ]; then
+        echo "Installing Oh My Zsh..."
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    else
+        echo "Oh My Zsh is already installed."
+    fi
+
+    # Set Zsh as the default shell
+    chsh -s $(which zsh)
+    echo "Zsh set as the default shell."
+}
+
+clone_zsh_plugins() {
+    # Clone Zsh plugins (autosuggestions and syntax highlighting)
+    git clone https://github.com/zsh-users/zsh-autosuggestions "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting"
+
+    echo "Cloned Zsh plugins."
+}
+
+copy_zsh_config() {
+    # Copy the custom .zshrc file
+    CONFIG_ZSHRC="$HOME/dot_files/.config/zsh/.zshrc"
+    if [ -f "$CONFIG_ZSHRC" ]; then
+        cp "$CONFIG_ZSHRC" "$HOME/.zshrc"
+        echo "Copied custom .zshrc to the home directory."
+    else
+        echo "Custom .zshrc file not found."
+        exit 1
+    fi
+}
+
+install_oh_my_posh() {
+    # Install Oh My Posh if needed
+    if [ ! -d "$HOME/.config/oh-my-posh" ]; then
+        echo "Cloning and installing Oh My Posh..."
+        git clone https://github.com/JanDeDobbeleer/oh-my-posh.git "$HOME/.config/oh-my-posh"
+    else
+        echo "Oh My Posh is already installed."
+    fi
+}
+
+copy_xinitrc() {
+    # Copy the .xinitrc file
+    XINITRC="$HOME/dot_files/.config/.xinitrc"
+    if [ -f "$XINITRC" ]; then
+        cp "$XINITRC" "$HOME/.xinitrc"
+        echo "Copied custom .xinitrc to the home directory."
+    else
+        echo ".xinitrc file not found."
+        exit 1
+    fi
+}
+
+copy_kitty_and_nvim() {
+    # Copy Kitty and Neovim configuration folders
+    if [ -d "$HOME/dot_files/.config/kitty" ]; then
+        cp -r "$HOME/dot_files/.config/kitty" "$HOME/.config/"
+        echo "Copied Kitty configuration."
+    else
+        echo "Kitty configuration not found."
+    fi
+
+    if [ -d "$HOME/dot_files/.config/nvim" ]; then
+        cp -r "$HOME/dot_files/.config/nvim" "$HOME/.config/"
+        echo "Copied Neovim configuration."
+    else
+        echo "Neovim configuration not found."
+    fi
+}
+
+# Main Function
 main() {
-    # Check and install yay if necessary
-    check_yay
-
-    # Install system dependencies
+    # Install dependencies
     install_dependencies
-
-    # Install AUR dependencies
-    install_aur_dependencies
 
     # Install fonts
     install_fonts
 
-    # Clone, patch, and install dwm
-    install_dwm
+    # Clone and patch DWM
+    clone_and_patch_dwm
+
+    # Install Zsh and set it as default
+    install_zsh
+
+    # Clone Zsh plugins
+    clone_zsh_plugins
+
+    # Copy .zshrc file
+    copy_zsh_config
+
+    # Install Oh My Posh
+    install_oh_my_posh
+
+    # Copy .xinitrc file
+    copy_xinitrc
+
+    # Copy Kitty and Neovim folders
+    copy_kitty_and_nvim
 }
 
 # Run the main function

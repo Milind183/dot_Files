@@ -2,8 +2,7 @@ if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
 	exec startx &>/dev/null 
 fi
 
-export PATH=$PATH:~/devl/poshh
-export PATH=$PATH:~/devl/eww/target/release
+export PATH=$PATH:~/.config/
 
 eval "$(oh-my-posh init zsh --config ~/devl/oh-my-posh/themes/catppuccin_macchiato.omp.json)"
 

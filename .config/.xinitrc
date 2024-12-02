@@ -1,9 +1,7 @@
-# Set wallpaper using feh
-feh --bg-scale ~/Downloads/walls/abstract-swirls.jpg &
+/home/rex/walll.sh &
 
-# Start Picom for compositing
-picom --config ~/.config/picom/picom.conf &
+/home/rex/xset.sh &
 
-#Start your window manager
+picom --config ~/.config/picom/picom.conf  &
+
 exec dwm 
-

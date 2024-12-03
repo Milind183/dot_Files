@@ -1,14 +1,9 @@
 #include <X11/XF86keysym.h>
 
 /* Appearance settings */
-static const unsigned int systraypinning = 0;   /* 0: sloppy systray follows selected monitor, >0: pin systray to monitor X */
-static const unsigned int systrayonleft  = 1;   /* 0: systray in the right corner, >0: systray on left of status text */
-static const unsigned int systrayspacing = 2;   /* systray spacing */
-static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display systray on the first monitor, False: display systray on the last monitor */
-static const int showsystray        = 1;        /* 0 means no systray */
 static const int vertpad            = 10;       /* vertical padding of bar */
 static const int sidepad            = 10;       /* horizontal padding of bar */
-static const int barpadding         = 5;
+static const int barpadding         = 10;
 static const unsigned int gappih    = 10;       /* horiz inner gap between windows */
 static const unsigned int gappiv    = 10;       /* vert inner gap between windows */
 static const unsigned int gappoh    = 10;       /* horiz outer gap between windows and screen edge */
@@ -28,18 +23,8 @@ static       int smartgaps          = 0;
 /* Enum for color schemes */
 enum { SchemeStatus, SchemeIndicator, SchemeMsg, SchemeLast };
 /* Enum for tag schemes */
-enum {
-    SchemeTag,
-    SchemeTag1,
-    SchemeTag2,
-    SchemeTag3,
-    SchemeTag4,
-    SchemeTag5,
-};
+enum {  SchemeTag ,SchemeTag1, SchemeTag2, SchemeTag3, SchemeTag4, SchemeTag5 }; // Define all schemes
 
-static const int tagschemes[] = {
-    SchemeTag1, SchemeTag2, SchemeTag3, SchemeTag4, SchemeTag5
-};
 /* Colors */
 static const char col_gray1[]       = "#292c3c";  /* Background color (dark) */
 static const char col_gray2[]       = "#8caaee";  /* Inactive window border */

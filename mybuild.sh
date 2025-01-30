@@ -48,7 +48,7 @@ install_dependencies() {
 		libgl libepoxy pcre2 pixman xcb-util-image xcb-util-renderutil dbus \
 		xorg-xprop xorg-xwininfo rtkit meson git xorgproto libxext asciidoc \
 		neovim kitty nodejs npm dmenu xclip bat eza bluez-utils bluez  pulseaudio-bluetooth \
-  		zsh
+  		zsh wget
 
 	yay -S --noconfirm uthash
 	echo "Dependencies installed successfully."

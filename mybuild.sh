@@ -60,38 +60,6 @@ install_nerd_fonts() {
     echo "Nerd fonts installed."
 }
 
-install_zsh() {
-    echo "Installing Zsh..."
-    sudo pacman -S --noconfirm zsh
-
-    if [ ! -d "$HOME/.oh-my-zsh" ]; then
-        echo "Cloning oh-my-zsh..."
-        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    else
-        echo "oh-my-zsh already installed, skipping installation."
-    fi
-
-    # Clone plugins for Zsh
-    echo "Cloning Zsh plugins..."
-    git clone https://github.com/zsh-users/zsh-autosuggestions \
-        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
-        ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting
-
-    # Copy the .zshrc file
-    ZSHRC_FILE="$HOME/dot_files/.config/zsh/.zshrc"
-    if [ -f "$ZSHRC_FILE" ]; then
-        cp "$ZSHRC_FILE" "$HOME/.zshrc" && echo "Copied .zshrc file."
-    else
-        echo ".zshrc file not found at $ZSHRC_FILE. Exiting..."
-        exit 1
-    fi
-
-    # Set zsh as the default shell
-    chsh -s $(which zsh) && echo "Zsh set as the default shell."
-}
-
-
 # Call the function to check and install yay if needed
 main() {
 	install_yay_if_needed

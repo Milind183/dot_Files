@@ -47,7 +47,7 @@ install_dependencies() {
 		libvterm unibilium tree-sitter cmake ninja pkgconf picom libconfig libev \
 		libgl libepoxy pcre2 pixman xcb-util-image xcb-util-renderutil dbus \
 		xorg-xprop xorg-xwininfo rtkit meson git xorgproto libxext asciidoc \
-		neovim kitty nodejs npm dmenu xclip 
+		neovim kitty nodejs npm dmenu xclip bat eza
 
 	yay -S --noconfirm uthash
 	echo "Dependencies installed successfully."

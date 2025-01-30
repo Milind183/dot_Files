@@ -53,6 +53,42 @@ install_dependencies() {
 	echo "Dependencies installed successfully."
 }
 
+install_dwm() {
+  # Update system
+  echo "Updating system..."
+  sudo pacman -Syu --noconfirm
+
+  # Install dependencies
+  echo "Installing dependencies..."
+  sudo pacman -S --noconfirm base-devel git
+
+  # Clone dwm repository
+  echo "Cloning dwm repository..."
+  git clone https://git.suckless.org/dwm
+
+  # Navigate into the dwm directory
+  cd dwm || { echo "Failed to enter dwm directory."; return 1; }
+
+  # Build and install dwm
+  echo "Building dwm..."
+  sudo make clean install
+
+  # Check if installation is successful
+  if which dwm >/dev/null 2>&1; then
+    echo "dwm installed successfully!"
+  else
+    echo "Installation failed."
+    return 1
+  fi
+
+  # Optionally, copy the configuration file
+  echo "Setting up configuration file..."
+  cp config.h ~/.dwm_config.h
+
+  echo "Installation complete! You can now run dwm with the 'dwm' command."
+}
+
+
 # Function to install nerd fonts
 install_nerd_fonts() {
     echo "Installing nerd fonts (Fira, Hack, JetBrains)..."
@@ -64,6 +100,8 @@ install_nerd_fonts() {
 main() {
 	install_yay_if_needed
 	install_dependencies
+	install_nerd_fonts	
+	install_dwm
 }
 
 main

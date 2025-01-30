@@ -96,12 +96,48 @@ install_nerd_fonts() {
     echo "Nerd fonts installed."
 }
 
+install_picom() {
+  # Clone the picom repository from GitHub
+  echo "Cloning picom repository..."
+  git clone --recursive https://github.com/EdenQwQ/picom.git
+
+  # Navigate into the picom directory
+  cd picom || { echo "Failed to enter picom directory."; return 1; }
+
+  # Initialize submodules (if any)
+  echo "Initializing submodules..."
+  git submodule update --init --recursive
+
+  # Set up Meson build system
+  echo "Setting up build with Meson..."
+  meson --buildtype=release . build
+
+  # Build picom using Ninja
+  echo "Building picom..."
+  ninja -C build
+
+  # Install picom
+  echo "Installing picom..."
+  sudo ninja -C build install
+
+  # Verify installation
+  if which picom >/dev/null 2>&1; then
+    echo "picom installed successfully!"
+  else
+    echo "Installation failed."
+    return 1
+  fi
+
+  echo "Installation complete! You can now run picom with the 'picom' command."
+}
+
 # Call the function to check and install yay if needed
 main() {
 	install_yay_if_needed
 	install_dependencies
 	install_nerd_fonts	
 	install_dwm
+	install_picom
 }
 
 main

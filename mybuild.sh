@@ -47,13 +47,14 @@ install_dependencies() {
 		libvterm unibilium tree-sitter cmake ninja pkgconf picom libconfig libev \
 		libgl libepoxy pcre2 pixman xcb-util-image xcb-util-renderutil dbus \
 		xorg-xprop xorg-xwininfo rtkit meson git xorgproto libxext asciidoc \
-		neovim kitty nodejs npm dmenu xclip bat eza
+		neovim kitty nodejs npm dmenu xclip bat eza bluez-utils bluez  pulseaudio-bluetooth \
 
 	yay -S --noconfirm uthash
 	echo "Dependencies installed successfully."
 }
 
 install_dwm() {
+  cd ~
   # Update system
   echo "Updating system..."
   sudo pacman -Syu --noconfirm
@@ -97,6 +98,7 @@ install_nerd_fonts() {
 }
 
 install_picom() {
+  cd ~
   # Clone the picom repository from GitHub
   echo "Cloning picom repository..."
   git clone --recursive https://github.com/EdenQwQ/picom.git

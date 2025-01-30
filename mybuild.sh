@@ -54,39 +54,47 @@ install_dependencies() {
 }
 
 install_dwm() {
-  cd ~
-  # Update system
-  echo "Updating system..."
-  sudo pacman -Syu --noconfirm
+echo "Cloning dwm repository..."
+    DWM_REPO="https://git.suckless.org/dwm"
+    DWM_DIR="$HOME/dwm"
+    PATCH_FOLDER="$HOME/dot_Files/.config/dwm/patches"
+    CONFIG_H="$HOME/dot_Files/.config/dwm/config.h"
 
-  # Install dependencies
-  echo "Installing dependencies..."
-  sudo pacman -S --noconfirm base-devel git
+    # Clone dwm repository into the home directory
+    if [ -d "$DWM_DIR" ]; then
+        echo "dwm directory already exists. Skipping clone."
+    else
+        git clone "$DWM_REPO" "$DWM_DIR" && echo "Cloned dwm repository."
+    fi
 
-  # Clone dwm repository
-  echo "Cloning dwm repository..."
-  git clone https://git.suckless.org/dwm
+    # Copy patch folder and config.h to the dwm directory
+    if [ -d "$PATCH_FOLDER" ]; then
+        cp -r "$PATCH_FOLDER" "$DWM_DIR/patches" && echo "Copied patches folder into dwm directory."
+    else
+        echo "Patch folder not found at $PATCH_FOLDER. Exiting..."
+        exit 1
+    fi
 
-  # Navigate into the dwm directory
-  cd dwm || { echo "Failed to enter dwm directory."; return 1; }
+    if [ -f "$CONFIG_H" ]; then
+        cp "$CONFIG_H" "$DWM_DIR/config.h" && echo "Copied custom config.h to dwm directory."
+    else
+        echo "Custom config.h file not found at $CONFIG_H. Exiting..."
+        exit 1
+    fi
 
-  # Build and install dwm
-  echo "Building dwm..."
-  sudo make clean install
+    # Apply patches
+    for PATCH in "$DWM_DIR/patches"/*.diff; do
+        if [ -f "$PATCH" ]; then
+            cd "$DWM_DIR" || exit
+            patch -p1 < "$PATCH" && echo "Applied patch: $PATCH"
+        else
+            echo "Patch file $PATCH not found. Skipping..."
+        fi
+    done
 
-  # Check if installation is successful
-  if which dwm >/dev/null 2>&1; then
-    echo "dwm installed successfully!"
-  else
-    echo "Installation failed."
-    return 1
-  fi
-
-  # Optionally, copy the configuration file
-  echo "Setting up configuration file..."
-  cp config.h ~/.dwm_config.h
-
-  echo "Installation complete! You can now run dwm with the 'dwm' command."
+    # Build and install dwm
+    cd "$DWM_DIR" || exit
+    sudo make clean install && echo "dwm has been successfully built and installed."
 }
 
 
